@@ -32,15 +32,13 @@ const OrderBook = () => {
     updatePrecision(newPrecision);
   }, []);
 
-  const formatPrice = (price) => price?.toFixed(precision);
-
   const renderItem = ({ item }) => {
     if (!item || item.amount === undefined || item.price === undefined)
       return null;
     return (
       <View style={[styles.row]}>
         <Text style={styles.text}>{Math.abs(item?.amount)}</Text>
-        <Text style={styles.text}>{formatPrice(item?.price)}</Text>
+        <Text style={styles.text}>{item?.price}</Text>
       </View>
     );
   };
@@ -54,6 +52,9 @@ const OrderBook = () => {
           onPress={handleDisconnect}
           disabled={!connected}
         />
+      </View>
+      <View>
+        <Text style={styles.title}>Order Book</Text>
       </View>
       <View style={styles.depthBars}>
         <FlatList
@@ -119,6 +120,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
 

@@ -24,7 +24,7 @@ const subscribeToBook = (precision) => {
         channel: "book",
         symbol: "tBTCUSD",
         prec: `P${precision}`, // Adjust precision dynamically
-        freq: "F0",
+        // freq: "F0",
         len: 25,
       })
     );
@@ -47,16 +47,32 @@ export const connectWebSocket = () => {
     const data = JSON.parse(event.data);
     if (Array.isArray(data[1])) {
       const [price, count, amount] = data[1];
+      const order = {
+        price,
+        count,
+        amount,
+      };
+
+      let { bids, asks } = store.getState().orderBook;
+
+      bids = [...bids];
+      asks = [...asks];
+
       if (count > 0) {
         if (amount > 0) {
-          store.dispatch(
-            setBids((prevBids) => [...prevBids, { price, amount }])
-          );
+          bids.push(order);
         } else {
-          store.dispatch(
-            setAsks((prevAsks) => [...prevAsks, { price, amount: -amount }])
-          );
+          asks.push(order);
         }
+      }
+      bids.sort((a, b) => a.price - b.price);
+      asks.sort((a, b) => a.price - b.price);
+
+      if (bids.length > 0) {
+        store.dispatch(setBids(bids));
+      }
+      if (asks.length > 0) {
+        store.dispatch(setAsks(asks));
       }
     }
   };
